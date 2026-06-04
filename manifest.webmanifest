@@ -1,0 +1,12 @@
+{
+  "name": "NIUMA TO DO",
+  "short_name": "NM TODO",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#1a1a2e",
+  "theme_color": "#667eea",
+  "icons": [
+    { "src": "icon128.png", "sizes": "128x128", "type": "image/png" },
+    { "src": "icon48.png", "sizes": "48x48", "type": "image/png" }
+  ]
+}
