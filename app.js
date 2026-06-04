@@ -36,7 +36,14 @@ async function syncFromGist() {
   if (!token || !id) return;
   try {
     const remote = await gistLoad(token, id);
-    if (remote) { data = remote; storeSet('data', data); render(); }
+    if (remote && (remote.work?.length || remote.personal?.length)) {
+      data = remote;
+      if (!data.trash) data.trash = [];
+      storeSet('data', data);
+      render();
+    } else if (data.work.length || data.personal.length) {
+      await gistSave(token, id, data);
+    }
   } catch {}
 }
 
