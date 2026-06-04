@@ -26,27 +26,21 @@ function save() {
 }
 
 async function syncToGist() {
-  const gistToken = storeGet('gistToken'), gistId = storeGet('gistId');
-  if (!gistToken || !gistId) return;
-  try { await gistSave(gistToken, gistId, data); showSyncStatus('✓'); }
-  catch { showSyncStatus('✗'); }
+  const token = storeGet('gistToken'), id = storeGet('gistId');
+  if (!token || !id) return;
+  try { await gistSave(token, id, data); } catch {}
 }
 
 async function syncFromGist() {
-  const gistToken = storeGet('gistToken'), gistId = storeGet('gistId');
-  if (!gistToken || !gistId) return;
+  const token = storeGet('gistToken'), id = storeGet('gistId');
+  if (!token || !id) return;
   try {
-    showSyncStatus('⟳');
-    const remote = await gistLoad(gistToken, gistId);
+    const remote = await gistLoad(token, id);
     if (remote) { data = remote; storeSet('data', data); render(); }
-    showSyncStatus('✓');
-  } catch { showSyncStatus('✗'); }
+  } catch {}
 }
 
-function showSyncStatus(icon) {
-  const el = document.getElementById('syncStatus');
-  if (el) { el.textContent = icon; setTimeout(() => el.textContent = '⇄', 2000); }
-}
+function showSyncStatus() {}
 
 function load() {
   data = storeGet('data') || { work: [], personal: [], trash: [] };
@@ -319,7 +313,6 @@ addBtn.addEventListener('click', add);
 input.addEventListener('keydown', e => { if (e.key === 'Enter') add(); });
 hideToggle.addEventListener('change', () => { storeSet('hideDone', hideToggle.checked); render(); });
 document.getElementById('trashBtn').addEventListener('click', () => { showTrash = !showTrash; renderTrash(); });
-document.getElementById('syncStatus').addEventListener('click', syncFromGist);
 
 // Settings
 const settingsBtn = document.getElementById('settingsBtn');
@@ -341,3 +334,4 @@ document.getElementById('saveSettings').addEventListener('click', () => {
 applyTheme(storeGet('theme') || 'dark');
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
 load();
+setInterval(syncFromGist, 60000);
