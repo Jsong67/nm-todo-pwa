@@ -251,22 +251,27 @@ function onDragEnd(e) {
   list.querySelectorAll('li').forEach(el => el.classList.remove('drag-over-top', 'drag-over-bottom'));
 }
 
-// Touch drag (mobile)
-let touchLi = null, touchStartY = 0, touchClone = null;
+// Touch drag (mobile) - long press to activate
+let touchLi = null, touchStartY = 0, touchClone = null, touchTimer = null, touchActive = false;
 function onTouchStart(e) {
   if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON') return;
-  touchLi = e.currentTarget;
+  const li = e.currentTarget;
   touchStartY = e.touches[0].clientY;
-  dragIdx = +touchLi.dataset.idx;
+  touchTimer = setTimeout(() => {
+    touchActive = true;
+    touchLi = li;
+    dragIdx = +li.dataset.idx;
+    li.style.opacity = '0.7';
+    li.style.zIndex = '999';
+    if (navigator.vibrate) navigator.vibrate(30);
+  }, 500);
 }
 function onTouchMove(e) {
+  if (!touchActive) { clearTimeout(touchTimer); return; }
   if (!touchLi) return;
   e.preventDefault();
   const y = e.touches[0].clientY;
   touchLi.style.transform = `translateY(${y - touchStartY}px)`;
-  touchLi.style.opacity = '0.7';
-  touchLi.style.zIndex = '999';
-  // highlight drop target
   list.querySelectorAll('li').forEach(el => {
     el.classList.remove('drag-over-top', 'drag-over-bottom');
     if (el === touchLi) return;
@@ -277,7 +282,8 @@ function onTouchMove(e) {
   });
 }
 function onTouchEnd(e) {
-  if (!touchLi) return;
+  clearTimeout(touchTimer);
+  if (!touchActive || !touchLi) { touchActive = false; touchLi = null; return; }
   const y = e.changedTouches[0].clientY;
   let dropIdx = dragIdx;
   list.querySelectorAll('li').forEach(el => {
@@ -293,7 +299,7 @@ function onTouchEnd(e) {
     save();
   }
   touchLi.style.transform = ''; touchLi.style.opacity = ''; touchLi.style.zIndex = '';
-  touchLi = null; dragIdx = null;
+  touchLi = null; dragIdx = null; touchActive = false;
   render();
 }
 

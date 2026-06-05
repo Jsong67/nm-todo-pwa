@@ -1,4 +1,4 @@
-const CACHE = 'nm-todo-v2';
+const CACHE = 'nm-todo-v3';
 const ASSETS = ['./index.html', './app.css', './app.js', './gist.js', './icon128.png', './icon48.png'];
 
 self.addEventListener('install', e => { self.skipWaiting(); e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS))); });
