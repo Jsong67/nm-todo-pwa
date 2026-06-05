@@ -308,7 +308,7 @@ function escHtml(s) { return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;'
 // Theme
 function applyTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
-  themeBtn.textContent = theme === 'light' ? '🌙' : '☀️';
+  themeBtn.textContent = theme === 'light' ? '☀️' : '🌙';
 }
 themeBtn.addEventListener('click', () => {
   const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
